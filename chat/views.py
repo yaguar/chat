@@ -10,7 +10,6 @@ from models import User, users
 class Hello(web.View):
     @aiohttp_jinja2.template('hello.html')
     async def get(self):
-        db = self.request.app['db']
         # conn = await asyncpg.connect(user='username', password='password',
         #                              database='django_db', host='127.0.0.1', port='5433')
 
@@ -23,12 +22,14 @@ class Hello(web.View):
         # data = {'username': None}
         # await conn.set_type_codec('json', encoder=json.dumps, decoder=json.loads, schema='pg_catalog')
         # query = db.select([User])
-        values = users.select()
-        values = await db.all(values)
+        print(await User.query.gino.all())
+        values = await User.query.gino.all()
         # values = await User.select()
         # await db.close()
-
-        return {'name': [value['login'] for value in values]}
+        dicter = []
+        for v in values:
+            print(v.login)
+        return {'name': [value.login for value in values]}
 
 
 class RoomMessages(web.View):

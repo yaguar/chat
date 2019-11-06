@@ -19,7 +19,8 @@ import gino
 from gino import Gino
 from gino.schema import GinoSchemaVisitor
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
-from models import User
+from gino.ext.aiohttp import Gino
+from models import db
 
 import hashlib
 
@@ -37,31 +38,36 @@ async def init_pg(app):
     #     host='127.0.0.1',
     #     port='5433'
     # )
-    metadata = MetaData()
-    users = Table(
-        'users', metadata,
-
-        Column('id', Integer, primary_key=True),
-        Column('login', String),
-        Column('passwd', String),
-    )
-    engine = await gino.create_engine('postgres://username:password@localhost:5433/chat_db')
-    await GinoSchemaVisitor(metadata).create_all(engine)
-    app['db'] = engine
+    # db = Gino()
+    #
+    # class User(db.Model):
+    #     __tablename__ = 'users'
+    #
+    #     id = db.Column(db.Integer(), primary_key=True)
+    #     login = db.Column(db.Unicode(), default='noname')
+    # engine = await db.set_bind('postgres://username:password@localhost:5433/chat_db')
+    # await db.gino.create_all()
+    # app['db'] = engine
+    # app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'localhost', 'port':'5433', 'database':'chat_db'}
 
 async def close_pg(app):
     await app['db'].close()
     del app['db']
 
+# db = Gino()
 middle = [
     # session_middleware(EncryptedCookieStorage(hashlib.sha256(bytes(SECRET_KEY, 'utf-8')).digest())),
     # authorize,
+    db
 ]
 
 # if DEBUG:
 # middle.append(aiohttp_debugtoolbar.middleware)
 
 app = web.Application(middlewares=middle)
+app['config'] = {}
+app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'localhost', 'port':'5433', 'database':'chat_db'}
+db.init_app(app)
 # aiohttp_debugtoolbar.setup(app)
 # app.on_startup.append(init_pg)
 # if DEBUG:

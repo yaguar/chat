@@ -1,8 +1,8 @@
-from gino import Gino
+
+from gino.ext.aiohttp import Gino
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 
 db = Gino()
-
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -19,3 +19,9 @@ users = Table(
     Column('login', String),
     Column('passwd', String),
 )
+
+
+async def init_db():
+
+	async with db.set_bind('postgres://username:password@localhost:5433/chat_db'):
+		await db.gino.create_all()
