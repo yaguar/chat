@@ -3,8 +3,7 @@ import asyncpg
 import json
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
-
-
+from models import User, users
 # async def hello(request):
 #     return web.Response(text="Hello, world")
 
@@ -23,10 +22,13 @@ class Hello(web.View):
         # )
         # data = {'username': None}
         # await conn.set_type_codec('json', encoder=json.dumps, decoder=json.loads, schema='pg_catalog')
-        values = await db.fetch('''SELECT username FROM auth_user''')
+        # query = db.select([User])
+        values = users.select()
+        values = await db.all(values)
+        # values = await User.select()
         # await db.close()
 
-        return {'name': [value['username'] for value in values]}
+        return {'name': [value['login'] for value in values]}
 
 
 class RoomMessages(web.View):

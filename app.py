@@ -15,6 +15,11 @@ from aiohttp import web
 from settings import *
 from routes import routes
 import asyncpg
+import gino
+from gino import Gino
+from gino.schema import GinoSchemaVisitor
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+from models import User
 
 import hashlib
 
@@ -25,13 +30,23 @@ async def on_shutdown(app):
 
 async def init_pg(app):
     app['websockets'] = []
-    engine = await asyncpg.connect(
-        user='username',
-        password='password',
-        database='chat_db',
-        host='127.0.0.1',
-        port='5432'
+    # engine = await asyncpg.connect(
+    #     user='username',
+    #     password='password',
+    #     database='chat_db',
+    #     host='127.0.0.1',
+    #     port='5433'
+    # )
+    metadata = MetaData()
+    users = Table(
+        'users', metadata,
+
+        Column('id', Integer, primary_key=True),
+        Column('login', String),
+        Column('passwd', String),
     )
+    engine = await gino.create_engine('postgres://username:password@localhost:5433/chat_db')
+    await GinoSchemaVisitor(metadata).create_all(engine)
     app['db'] = engine
 
 async def close_pg(app):
