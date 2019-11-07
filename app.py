@@ -3,7 +3,7 @@ import asyncio
 import aiohttp_jinja2
 import aiohttp_debugtoolbar
 import jinja2
-from aiohttp_session import session_middleware
+from aiohttp_session import SimpleCookieStorage, session_middleware
 # from aiohttp_session.cookie_storage import EncryptedCookieStorage
 # from aiohttp_session import session_middleware
 # from aiohttp_session.cookie_storage import EncryptedCookieStorage
@@ -21,6 +21,7 @@ from gino.schema import GinoSchemaVisitor
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from gino.ext.aiohttp import Gino
 from models import db
+from auth import authorization
 
 import hashlib
 
@@ -57,7 +58,8 @@ async def close_pg(app):
 # db = Gino()
 middle = [
     # session_middleware(EncryptedCookieStorage(hashlib.sha256(bytes(SECRET_KEY, 'utf-8')).digest())),
-    # authorize,
+    session_middleware(SimpleCookieStorage()),
+    authorization,
     db
 ]
 

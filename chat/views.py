@@ -4,8 +4,14 @@ import json
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User, users
+from aiohttp_session import get_session
+from time import time
 # async def hello(request):
 #     return web.Response(text="Hello, world")
+def set_session(session, user_id, request):
+    session['user'] = str(user_id)
+    session['last_visit'] = time()
+
 
 class Hello(web.View):
     @aiohttp_jinja2.template('hello.html')
@@ -30,6 +36,23 @@ class Hello(web.View):
         for v in values:
             print(v.login)
         return {'name': [value.login for value in values]}
+
+
+class Login(web.View):
+    @aiohttp_jinja2.template('login.html')
+    async def get(self):
+        pass
+
+    async def post(self):
+        data = await self.request.post()
+        user = User(self.request.app.db, data)
+        result = await user.check_user()
+        if isinstance(result, dict):
+            session = await get_session(self.request)
+            set_session(session, str(result['_id']), self.request)
+        else:
+            return web.json_response({'error': result}, text=None, body=None, status=200, reason=None,
+                  headers=None, content_type='appliciaton/json', dumps=json.dumps)
 
 
 class RoomMessages(web.View):

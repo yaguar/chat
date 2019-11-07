@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  <body>
+    <form action="/login" method="post">
+        <div id="error" style="color: red;"></div>
+        <div class="form-group">
+            <label>Insert login
+                <input type="text" class="form-control" pattern="[A-Za-zА-Яа-я0-9]{3,}" placeholder="Login" name="login" required>
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label>Enter password
+                <input type="password" class="form-control" pattern="[A-Za-zА-Яа-я0-9]{8,}" placeholder="Password", name="password" required>
+            </label>
+        </div>
+        <p>
+            <input class="btn btn-primary" id="submit" title="Send" type="submit" value="Send">
+        </p>
+    </form>
+  </body>
+</html>
