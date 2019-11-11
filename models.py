@@ -9,6 +9,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
     login = db.Column(db.Unicode(), default='noname')
+    passwd = db.Column(db.Unicode(), default='noname')
 
 
 metadata = MetaData()

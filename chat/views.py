@@ -5,12 +5,7 @@ import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User, users
 from aiohttp_session import get_session
-from time import time
-# async def hello(request):
-#     return web.Response(text="Hello, world")
-def set_session(session, user_id, request):
-    session['user'] = str(user_id)
-    session['last_visit'] = time()
+from utils import check_pass, set_session
 
 
 class Hello(web.View):
@@ -28,14 +23,10 @@ class Hello(web.View):
         # data = {'username': None}
         # await conn.set_type_codec('json', encoder=json.dumps, decoder=json.loads, schema='pg_catalog')
         # query = db.select([User])
-        print(await User.query.gino.all())
-        values = await User.query.gino.all()
-        # values = await User.select()
-        # await db.close()
-        dicter = []
-        for v in values:
-            print(v.login)
-        return {'name': [value.login for value in values]}
+        session = await get_session(self.request)
+        login = session.get('login')
+        user = await User.query.where(User.login==login).gino.first()
+        return {'name': user.login}
 
 
 class Login(web.View):
@@ -45,14 +36,11 @@ class Login(web.View):
 
     async def post(self):
         data = await self.request.post()
-        user = User(self.request.app.db, data)
-        result = await user.check_user()
-        if isinstance(result, dict):
+        user = await User.query.where(User.login==data['login']).gino.first()
+        if user and await check_pass(data['login'], data['password']):
             session = await get_session(self.request)
-            set_session(session, str(result['_id']), self.request)
-        else:
-            return web.json_response({'error': result}, text=None, body=None, status=200, reason=None,
-                  headers=None, content_type='appliciaton/json', dumps=json.dumps)
+            set_session(session, user.login, data['password'])
+        return web.Response(status=400, text='Неправильный логин или пароль')
 
 
 class RoomMessages(web.View):
@@ -102,6 +90,5 @@ class WebSocket(web.View):
                       ws.exception())
 
         self.request.app['websockets'].remove(ws)
-        print('websocket connection closed')
 
         return ws

@@ -4,6 +4,7 @@ import aiohttp_jinja2
 import aiohttp_debugtoolbar
 import jinja2
 from aiohttp_session import SimpleCookieStorage, session_middleware
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
 # from aiohttp_session.cookie_storage import EncryptedCookieStorage
 # from aiohttp_session import session_middleware
 # from aiohttp_session.cookie_storage import EncryptedCookieStorage
@@ -21,9 +22,10 @@ from gino.schema import GinoSchemaVisitor
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
 from gino.ext.aiohttp import Gino
 from models import db
-from auth import authorization
+from middleware import authorization
 
-import hashlib
+import base64
+from cryptography import fernet
 
 
 async def on_shutdown(app):
@@ -56,9 +58,11 @@ async def close_pg(app):
     del app['db']
 
 # db = Gino()
+fernet_key = fernet.Fernet.generate_key()
+secret_key = base64.urlsafe_b64decode(fernet_key)
 middle = [
     # session_middleware(EncryptedCookieStorage(hashlib.sha256(bytes(SECRET_KEY, 'utf-8')).digest())),
-    session_middleware(SimpleCookieStorage()),
+    session_middleware(EncryptedCookieStorage(secret_key)),
     authorization,
     db
 ]
