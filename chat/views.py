@@ -1,6 +1,4 @@
-from aiohttp import web
-import asyncpg
-import json
+from motor import motor_asyncio as ma
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User, users
@@ -11,18 +9,12 @@ from utils import check_pass, set_session
 class Hello(web.View):
     @aiohttp_jinja2.template('hello.html')
     async def get(self):
-        # conn = await asyncpg.connect(user='username', password='password',
-        #                              database='django_db', host='127.0.0.1', port='5433')
-
-        # await conn.set_type_codec(
-        #     'json',
-        #     encoder=json.dumps,
-        #     decoder=json.loads,
-        #     schema = 'pg_catalog'
-        # )
-        # data = {'username': None}
-        # await conn.set_type_codec('json', encoder=json.dumps, decoder=json.loads, schema='pg_catalog')
-        # query = db.select([User])
+        mongo = self.request.app['mongo']
+        # document = {'key1': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+        # cursor = mongo.test_collection.find()
+        # for document in await cursor.to_list(length=100):
+        #     value=document
         session = await get_session(self.request)
         login = session.get('login')
         user = await User.query.where(User.login==login).gino.first()
@@ -44,7 +36,7 @@ class Login(web.View):
 
 
 class RoomMessages(web.View):
-    @aiohttp_jinja2.template('room_messages.html')
+    @aiohttp_jinja2.template('room_test.html')
     async def get(self):
         pass
         # db = self.request.app['db']

@@ -12,7 +12,7 @@ from aiohttp import web
 
 # from routes import routes
 # from middlewares import authorize
-# from motor import motor_asyncio as ma
+from motor import motor_asyncio as ma
 from settings import *
 from routes import routes
 import asyncpg
@@ -34,6 +34,9 @@ async def on_shutdown(app):
 
 async def init_pg(app):
     app['websockets'] = []
+    client = ma.AsyncIOMotorClient('mongodb://127.0.0.1:27017')
+    mongo = client['chat_db']
+    app['mongo'] = mongo
     # engine = await asyncpg.connect(
     #     user='username',
     #     password='password',
@@ -54,8 +57,8 @@ async def init_pg(app):
     # app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'localhost', 'port':'5433', 'database':'chat_db'}
 
 async def close_pg(app):
-    await app['db'].close()
-    del app['db']
+    await app['mongo'].close()
+    del app['mongo']
 
 # db = Gino()
 fernet_key = fernet.Fernet.generate_key()
