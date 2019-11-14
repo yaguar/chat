@@ -7,18 +7,19 @@ from utils import check_pass, set_session
 
 
 class Hello(web.View):
-    @aiohttp_jinja2.template('hello.html')
+    @aiohttp_jinja2.template('index.html')
     async def get(self):
-        mongo = self.request.app['mongo']
-        # document = {'key1': 'value'}
+        pass
+        # mongo = self.request.app['mongo']
+        # document = {'key3': 'value'}
         # result = await mongo.test_collection.insert_one(document)
         # cursor = mongo.test_collection.find()
         # for document in await cursor.to_list(length=100):
         #     value=document
-        session = await get_session(self.request)
-        login = session.get('login')
-        user = await User.query.where(User.login==login).gino.first()
-        return {'name': user.login}
+        # session = await get_session(self.request)
+        # login = session.get('login')
+        # user = await User.query.where(User.login==login).gino.first()
+        # return {'name': user.login}
 
 
 class Login(web.View):
@@ -36,7 +37,7 @@ class Login(web.View):
 
 
 class RoomMessages(web.View):
-    @aiohttp_jinja2.template('room_test.html')
+    @aiohttp_jinja2.template('room_messages.html')
     async def get(self):
         pass
         # db = self.request.app['db']
