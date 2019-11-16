@@ -1,4 +1,4 @@
-from chat.views import Hello, WebSocket, RoomMessages, Login
+from chat.views import Hello, WebSocket, RoomMessages, Login, Messages
 
 routes = [
     # ('GET', '/',        ChatList,  'main'),
@@ -8,5 +8,6 @@ routes = [
     # ('*',   '/signout', SignOut,   'signout'),
     ('GET', '/hello', Hello, 'hello'),
     ('GET', '/room', RoomMessages, 'room'),
+    ('*', '/messages', Messages, 'messages'),
     ('GET', '/ws',  WebSocket, 'socket_message')
 ]

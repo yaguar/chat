@@ -2,6 +2,7 @@ from motor import motor_asyncio as ma
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User, users
+from chat.models import Message
 from aiohttp_session import get_session
 from utils import check_pass, set_session
 
@@ -85,3 +86,31 @@ class WebSocket(web.View):
         self.request.app['websockets'].remove(ws)
 
         return ws
+
+class Messages(web.View):
+    async def get(self):
+        mongo = Message(self.request.app['mongo']['test_collection'])
+        messages = await mongo.get_messages()
+        # document = {'key3': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+
+        # session = await get_session(self.request)
+        # login = session.get('login')
+        # user = await User.query.where(User.login==login).gino.first()
+        return web.json_response({'message': messages})
+
+    async def post(self):
+        # try:
+        data = await self.request.post()
+        mongo = Message(self.request.app['mongo']['test_collection'])
+        await mongo.save(user = 'admin', msg = data['message'])
+        await mongo.save(user = 'other', msg = data['message'])
+        # document = {'key3': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+
+        # session = await get_session(self.request)
+        # login = session.get('login')
+        # user = await User.query.where(User.login==login).gino.first()
+        return web.Response(status=200)
+        # except Exception:
+        #     return web.Response(status=400)

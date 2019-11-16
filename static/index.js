@@ -8,7 +8,7 @@ import {Component} from 'react';
 import {reducer as formReducer} from 'redux-form';
 import thunk from 'redux-thunk';
 import addUser from './action/adduser';
-import {App} from './containers/App';
+import App from './containers/App';
 import reducer from './reducers/reducer';
 
 const rootReducer = combineReducers({
