@@ -3,8 +3,10 @@ import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User, users
 from chat.models import Message
+from serializer import JSONEncoder
 from aiohttp_session import get_session
 from utils import check_pass, set_session
+import json
 
 
 class Hello(web.View):
@@ -78,7 +80,9 @@ class WebSocket(web.View):
                     await ws.close()
                 else:
                     for _ws in self.request.app['websockets']:
-                        await _ws.send_str(msg.data)
+                        mongo = Message(self.request.app['mongo']['test_collection'])
+                        r = await mongo.save(user='admin', msg=msg.data)
+                        await _ws.send_json(r)
             elif msg.type == WSMsgType.ERROR:
                 print('ws connection closed with exception %s' %
                       ws.exception())
@@ -97,14 +101,16 @@ class Messages(web.View):
         # session = await get_session(self.request)
         # login = session.get('login')
         # user = await User.query.where(User.login==login).gino.first()
-        return web.json_response({'message': messages})
+        return web.Response(status=200, body=JSONEncoder().encode(messages))
 
     async def post(self):
         # try:
         data = await self.request.post()
         mongo = Message(self.request.app['mongo']['test_collection'])
-        await mongo.save(user = 'admin', msg = data['message'])
-        await mongo.save(user = 'other', msg = data['message'])
+        # await mongo.save(user = 'admin', msg = data['message'])
+        # await mongo.save(user = 'other', msg = data['message'])
+        await mongo.save(user='admin', msg='message')
+        await mongo.save(user='other', msg='message')
         # document = {'key3': 'value'}
         # result = await mongo.test_collection.insert_one(document)
 

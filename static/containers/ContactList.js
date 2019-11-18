@@ -1,12 +1,12 @@
 import {connect} from 'react-redux';
 import React, {Component} from 'react';
-import deleteUser from '../action/deleteuser';
+import deleteMessage from '../action/deletemessage';
 import Person from '../components/Person';
 
-const App = ({users, onClicker}) => 	(
+const App = ({messages, onClicker}) => 	(
   <ul class="list-group">
-    {users.map((user, index) => (
-      <Person key={index} user={user} onClicker={onClicker} index={index}/>  
+    {messages.map((message, index) => (
+      <Person key={index} message={message} onClicker={onClicker} index={index}/>
     ))}
   </ul>
 );
@@ -38,20 +38,20 @@ function method_delete(number){
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {onClicker: (index) =>{ if (method_delete(index)!=0) {dispatch(deleteUser(index))} }}
+	return {onClicker: (index) =>{ if (method_delete(index)!=0) {dispatch(deleteMessage(index))} }}
 	
 }
 
 const mapStateToProps = (state) => {
 	let props = {
-		users: state.users.users,
+		messages: state.messages.messages,
 	};
 	return props;
 }
 
 const listPerson = connect(
 	mapStateToProps,
-        mapDispatchToProps
+    mapDispatchToProps
 )(App);
 
 export default listPerson;

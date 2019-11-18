@@ -66,7 +66,7 @@ secret_key = base64.urlsafe_b64decode(fernet_key)
 middle = [
     # session_middleware(EncryptedCookieStorage(hashlib.sha256(bytes(SECRET_KEY, 'utf-8')).digest())),
     session_middleware(EncryptedCookieStorage(secret_key)),
-    # authorization,
+    authorization,
     db
 ]
 

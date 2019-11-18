@@ -4,10 +4,10 @@ import React from 'react';
 const Person = (props) => (
   <li class="list-group-item">
         <span class="left">
-          {props.user.last_name} {props.user.first_name}
+          {props.message.msg} {props.message.time}
         </span> 
         <span class="right">
-          {props.user.phone} 
+          {props.message.user}
           <button type="submit" class="btn" onClick={()=>{props.onClicker(props.index)}}>
             <i class="icon ion-close-round right"></i>
           </button> 

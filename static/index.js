@@ -7,12 +7,12 @@ import logger from 'redux-logger';
 import {Component} from 'react';
 import {reducer as formReducer} from 'redux-form';
 import thunk from 'redux-thunk';
-import addUser from './action/adduser';
+import addMessage from './action/addmessage';
 import App from './containers/App';
 import reducer from './reducers/reducer';
 
 const rootReducer = combineReducers({
-  users: reducer,
+  messages: reducer,
   form: formReducer
 });
  
@@ -25,7 +25,7 @@ export let store = createStore(
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
-fetch('/listcontact')  
+fetch('/messages')
   .then(  
     function(response) {  
       if (response.status !== 200) {  
@@ -35,7 +35,7 @@ fetch('/listcontact')
       }
  
       response.json().then(function(data) {  
-        data.map((user, index) => store.dispatch(addUser(user)))  
+        data.map((message, index) => store.dispatch(addMessage(message)))
       });  
     }  
   )  

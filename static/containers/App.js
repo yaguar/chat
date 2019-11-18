@@ -4,6 +4,9 @@ import React from 'react';
 import ContactList from './ContactList';
 import 'react-chat-elements/dist/main.css';
 import { MessageBox, ChatItem, ChatList } from 'react-chat-elements';
+import addMessage from '../action/addmessage';
+import {connect} from "react-redux";
+import deleteMessage from "../action/deletemessage";
 
 class App extends React.Component {
 
@@ -15,7 +18,9 @@ class App extends React.Component {
         }
 
         ws.onmessage = evt => {
-            console.log(evt.data)
+            // console.log(this)
+
+            this.props.addMsg(JSON.parse(evt.data))
         // listen to data sent from the websocket server
         }
 
@@ -66,4 +71,20 @@ data={{
     }
 };
 
-export default App;
+const mapDispatchToProps = (dispatch) => {
+	return {addMsg: (message) => {dispatch(addMessage(message))} }
+}
+
+const mapStateToProps = (state) => {
+	let props = {
+		messages: state.messages.messages,
+	};
+	return props;
+}
+
+const mainApp = connect(
+	mapStateToProps,
+    mapDispatchToProps
+)(App);
+
+export default mainApp;

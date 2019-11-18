@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import addUser from '../action/adduser';
+import addMessage from '../action/addmessage';
 import React, {Component} from 'react';
 import { Field, reduxForm, isInvalid } from 'redux-form';
 import validate from '../js/validate';
@@ -89,14 +89,14 @@ function method_post(user){
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {onClicker: (user) => { if (method_post(user)!=0) {dispatch(addUser(user))}}}
+	return {onClicker: (message) => { if (method_post(message)!=0) {dispatch(addMessage(message))}}}
 	
 }
 
 
 const mapStateToProps = (state) => {
 	let props = {
-		users: state.users.users,
+		messages: state.messages.messages,
 	};
 	return props;
 }

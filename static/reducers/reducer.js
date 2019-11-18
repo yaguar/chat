@@ -1,13 +1,13 @@
-let initialState = { users:[]};
+let initialState = { messages:[]};
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'USER_ADD':{
-      return {users: [...state.users, action.users]}
+    case 'MESSAGE_ADD':{
+      return {messages: [...state.messages, action.messages]}
     };
-    case 'USER_REMOVE': {
-      return {users: [...state.users.filter((user, item) =>  item!==action.index)]}
+    case 'MESSAGE_REMOVE': {
+      return {messages: [...state.messages.filter((message, item) =>  item!==action.index)]}
     };
-    case 'USERS_UPDATE': {
+    case 'MESSGE_UPDATE': {
       return state;
     }
     default:
