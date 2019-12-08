@@ -5,7 +5,6 @@ import {createStore, combineReducers, getState} from 'redux';
 import {applyMiddleware, compose} from 'redux';
 import logger from 'redux-logger';
 import {Component} from 'react';
-import {reducer as formReducer} from 'redux-form';
 import thunk from 'redux-thunk';
 import addMessage from './action/addmessage';
 import App from './containers/App';
@@ -13,7 +12,6 @@ import reducer from './reducers/reducer';
 
 const rootReducer = combineReducers({
   messages: reducer,
-  form: formReducer
 });
  
 export let store = createStore(

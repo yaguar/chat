@@ -105,17 +105,19 @@ class Messages(web.View):
 
     async def post(self):
         # try:
-        data = await self.request.post()
+        data = await self.request.json()
+        message = data['message']
         mongo = Message(self.request.app['mongo']['test_collection'])
         # await mongo.save(user = 'admin', msg = data['message'])
         # await mongo.save(user = 'other', msg = data['message'])
-        await mongo.save(user='admin', msg='message')
-        await mongo.save(user='other', msg='message')
+        session = await get_session(self.request)
+        login = session.get('login')
+        msg = await mongo.save(user=login, msg=message)
+        for _ws in self.request.app['websockets']:
+            await _ws.send_json(msg)
         # document = {'key3': 'value'}
         # result = await mongo.test_collection.insert_one(document)
 
-        # session = await get_session(self.request)
-        # login = session.get('login')
         # user = await User.query.where(User.login==login).gino.first()
         return web.Response(status=200)
         # except Exception:

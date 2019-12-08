@@ -2,6 +2,7 @@ var path = require('path');
 var webpack = require('webpack')
 
 module.exports = {
+	mode: 'development',
 	entry:'./index.js',
 	devtool: 'source-map',
 	output:{
@@ -10,7 +11,7 @@ module.exports = {
 	},
 	
 	module:{
-	loaders:[{
+	rules:[{
 		test:/\.js$/,
 		exclude:/node_modules/,
 		use:{

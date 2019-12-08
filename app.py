@@ -75,7 +75,7 @@ middle = [
 
 app = web.Application(middlewares=middle)
 app['config'] = {}
-app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'localhost', 'port':'5433', 'database':'chat_db'}
+app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'localhost', 'port':'5432', 'database':'chat_db'}
 db.init_app(app)
 # aiohttp_debugtoolbar.setup(app)
 # app.on_startup.append(init_pg)

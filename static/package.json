@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "babel-preset-react": "^6.24.1",
+    "formik": "^2.0.6",
     "link": "^0.1.5",
     "react": "^16.2.0",
     "react-chat-elements": "^10.8.0",
@@ -20,7 +21,8 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
-    "webpack": "^3.10.0"
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "scripts": {
     "start": "webpack -w",
