@@ -91,6 +91,19 @@ class WebSocket(web.View):
 
         return ws
 
+class ContactList(web.View):
+    async def get(self):
+        mongo = Message(self.request.app['mongo']['test_collection'])
+        messages = await mongo.get_messages()
+        # document = {'key3': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+
+        # session = await get_session(self.request)
+        # login = session.get('login')
+        # user = await User.query.where(User.login==login).gino.first()
+        return web.Response(status=200, body=JSONEncoder().encode(messages))
+
+
 class Messages(web.View):
     async def get(self):
         mongo = Message(self.request.app['mongo']['test_collection'])

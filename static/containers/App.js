@@ -26,26 +26,40 @@ class App extends React.Component {
     render () {
         return (
 <div>
-    {this.props.messages.map((msg, index) => (
-        <MessageBox
-            key={index}
-            position={msg.user === 'admin' ? 'right' : 'left'}
-            type={'text'}
-            text={msg.msg}
-            index={index}
-            date={new Date(msg.time)}
-            data={{
-                uri: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Che_Guevara_vector_SVG_format.svg',
-                    status: {
-                        click: false,
-                        loading: 0,
-                    }
-            }}
-        />
-    ))}
-    <br/>
-    <Input />
-
+    <div class="row">
+        <div class="col-sm-3">
+            <ChatItem
+            avatar={'https://facebook.github.io/react/img/logo.svg'}
+            alt={'Reactjs'}
+            title={'Facebook'}
+            subtitle={'What are you doing?'}
+            date={new Date()}
+            unread={1} />
+        </div>
+        <div className="col-sm-9">
+            <div style={{overflow:"scroll", height:"65%", overflowX:"hidden"}}>
+        {this.props.messages.map((msg, index) => (
+            <MessageBox
+                key={index}
+                position={msg.user === 'admin' ? 'right' : 'left'}
+                type={'text'}
+                text={msg.msg}
+                index={index}
+                date={new Date(msg.time)}
+                data={{
+                    uri: 'https://upload.wikimedia.org/wikipedia/commons/2/21/Che_Guevara_vector_SVG_format.svg',
+                        status: {
+                            click: false,
+                            loading: 0,
+                        }
+                }}
+            />
+        ))}</div>
+        <span style={{position:"fixed", bottom:0, height:"25%", width:"60%", background:"white"}}>
+        <Input />
+        </span>
+        </div>
+    </div>
 </div>);
     }
 };
