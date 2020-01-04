@@ -2,7 +2,7 @@ from motor import motor_asyncio as ma
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User, users
-from chat.models import Message
+from chat.models import Message, Contacts
 from serializer import JSONEncoder
 from aiohttp_session import get_session
 from utils import check_pass, set_session
@@ -31,7 +31,7 @@ class Login(web.View):
         pass
 
     async def post(self):
-        data = await self.request.post()
+        data = await self.request.json()
         user = await User.query.where(User.login==data['login']).gino.first()
         if user and await check_pass(data['login'], data['password']):
             session = await get_session(self.request)
@@ -93,7 +93,7 @@ class WebSocket(web.View):
 
 class ContactList(web.View):
     async def get(self):
-        mongo = Message(self.request.app['mongo']['test_collection'])
+        mongo = Contacts(self.request.app['mongo']['test_collection'])
         messages = await mongo.get_messages()
         # document = {'key3': 'value'}
         # result = await mongo.test_collection.insert_one(document)

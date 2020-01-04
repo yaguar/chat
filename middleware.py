@@ -14,4 +14,5 @@ async def authorization(request, handler):
 
         # url = request.app.router['login'].canonical
         raise web.HTTPFound('/login')
+    request.login = login
     return await handler(request)
