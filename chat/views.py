@@ -1,11 +1,11 @@
 from motor import motor_asyncio as ma
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
-from models import User, users
+from models import User
 from chat.models import Message, Contacts
 from serializer import JSONEncoder
 from aiohttp_session import get_session
-from utils import check_pass, set_session
+from utils import check_pass, set_session, create_user
 import json
 
 
@@ -37,6 +37,21 @@ class Login(web.View):
             session = await get_session(self.request)
             set_session(session, user.login, data['password'])
         return web.Response(status=400, text='Неправильный логин или пароль')
+
+
+class Registration(web.View):
+    @aiohttp_jinja2.template('registration.html')
+    async def get(self):
+        pass
+
+    async def post(self):
+        data = await self.request.json()
+        user = await User.query.where(User.login==data['login']).gino.first()
+        if not user and data['password']:
+            await create_user(data['login'], data['password'])
+            session = await get_session(self.request)
+            set_session(session, data['login'], data['password'])
+        return web.Response(status=400, text='Данный логин уже существует')
 
 
 class RoomMessages(web.View):

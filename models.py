@@ -7,19 +7,19 @@ db = Gino()
 class User(db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.BigInteger(), autoincrement=True, primary_key=True)
     login = db.Column(db.Unicode(), default='noname')
     passwd = db.Column(db.Unicode(), default='noname')
 
 
-metadata = MetaData()
-users = Table(
-    'users', metadata,
-
-    Column('id', Integer, primary_key=True),
-    Column('login', String),
-    Column('passwd', String),
-)
+# metadata = MetaData()
+# users = Table(
+#     'users', metadata,
+#
+#     Column('id', Integer, primary_key=True),
+#     Column('login', String),
+#     Column('passwd', String),
+# )
 
 
 async def init_db():

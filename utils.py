@@ -11,10 +11,14 @@ def set_session(session, login, password):
 
 def check_path(path):
     result = True
-    for r in ['/login', '/static/', '/signin', '/signout']:
+    for r in ['/login', '/static/', '/signin', '/signout', '/registration']:
         if path.startswith(r):
             result = False
     return result
+
+async def create_user(login, password):
+    hash = pbkdf2_sha256.encrypt(password)
+    await User.create(login=login, passwd=hash)
 
 async def check_pass(login, password):
     user = await User.query.where(User.login == login).gino.first()
