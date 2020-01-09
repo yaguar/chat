@@ -39,6 +39,12 @@ class Login(web.View):
         return web.Response(status=400, text='Неправильный логин или пароль')
 
 
+class LoginList(web.View):
+    async def get(self):
+        q = self.request.rel_url.query['q']
+        return
+
+
 class Registration(web.View):
     @aiohttp_jinja2.template('registration.html')
     async def get(self):
@@ -150,3 +156,16 @@ class Messages(web.View):
         return web.Response(status=200)
         # except Exception:
         #     return web.Response(status=400)
+
+
+class ListPerson(web.View):
+    async def get(self):
+        users = await User.query.gino.all()
+        l = list(users)
+        # document = {'key3': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+
+        # session = await get_session(self.request)
+        # login = session.get('login')
+        # user = await User.query.where(User.login==login).gino.first()
+        return web.Response(status=200, body=JSONEncoder().encode(users))
