@@ -1,5 +1,5 @@
 let initialState = { messages:[]};
-const reducer = (state = initialState, action) => {
+const messages = (state = initialState, action) => {
   switch (action.type) {
     case 'MESSAGE_ADD':{
       return {messages: [...state.messages, action.messages]}
@@ -15,4 +15,4 @@ const reducer = (state = initialState, action) => {
   };
 };
 
-export default reducer;
+export default messages;

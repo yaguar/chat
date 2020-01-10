@@ -41,8 +41,9 @@ class Login(web.View):
 
 class LoginList(web.View):
     async def get(self):
-        q = self.request.rel_url.query['q']
-        return
+        search = self.request.rel_url.query['q']
+        users = await User.query.where(User.login.contains(search)).gino.all()
+        return web.Response(status=200, body=JSONEncoder().encode(users[:10]))
 
 
 class Registration(web.View):
@@ -111,18 +112,6 @@ class WebSocket(web.View):
         self.request.app['websockets'].remove(ws)
 
         return ws
-
-class ContactList(web.View):
-    async def get(self):
-        mongo = Contacts(self.request.app['mongo']['test_collection'])
-        messages = await mongo.get_messages()
-        # document = {'key3': 'value'}
-        # result = await mongo.test_collection.insert_one(document)
-
-        # session = await get_session(self.request)
-        # login = session.get('login')
-        # user = await User.query.where(User.login==login).gino.first()
-        return web.Response(status=200, body=JSONEncoder().encode(messages))
 
 
 class Messages(web.View):
