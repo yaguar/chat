@@ -3,6 +3,7 @@ import 'react-chat-elements/dist/main.css';
 import { MessageBox, ChatItem, ChatList } from 'react-chat-elements';
 import SearchField from "react-search-field";
 import addMessage from '../action/addmessage';
+import rewriteMessages from '../action/rewritemessages';
 import rewriteDialogs from '../action/rewritedialogs';
 import Input from '../components/Input';
 import {connect} from "react-redux";
@@ -52,49 +53,70 @@ class App extends React.Component {
 
     render () {
         return (
-<div>
-    <div class="row">
-        <div class="col-sm-3">
-            <SearchField
-              placeholder="Search..."
-              onChange={this.onChange}
-            />
-            {this.props.dialogs.map((dlg, index) => (
-                <ChatItem
-                    avatar={'https://upload.wikimedia.org/wikipedia/commons/2/21/Che_Guevara_vector_SVG_format.svg'}
-                    alt={'Reactjs'}
-                    title={dlg.login}
-                    subtitle={'not status'}
-                    unread={0}
-                />
-            ))}
-        </div>
-        <div className="col-sm-9">
-            <div style={{overflow:"scroll", height:"65%", overflowX:"hidden"}}>
-                {this.props.messages.map((msg, index) => (
-                    <MessageBox
-                        key={index}
-                        position={msg.user === 'admin' ? 'right' : 'left'}
-                        type={'text'}
-                        text={msg.msg}
-                        index={index}
-                        date={new Date(msg.time)}
-                    />
-                ))}
+            <div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <SearchField
+                          placeholder="Search..."
+                          onChange={this.onChange}
+                        />
+                        {this.props.dialogs.map((dlg, index) => (
+                            <ChatItem
+                                avatar={'https://upload.wikimedia.org/wikipedia/commons/2/21/Che_Guevara_vector_SVG_format.svg'}
+                                alt={'Reactjs'}
+                                title={dlg.login}
+                                subtitle={'not status'}
+                                unread={0}
+                                onClick={()=>this.props.rewriteMsg(dlg.id)}
+                            />
+                        ))}
+                    </div>
+                    <div className="col-sm-9">
+                        <div style={{overflow:"scroll", height:"65%", overflowX:"hidden"}}>
+                            {this.props.messages.map((msg, index) => (
+                                <MessageBox
+                                    key={index}
+                                    position={msg.user === 'admin' ? 'right' : 'left'}
+                                    type={'text'}
+                                    text={msg.msg}
+                                    index={index}
+                                    date={new Date(msg.time)}
+                                />
+                            ))}
+                        </div>
+                    <span style={{position:"fixed", bottom:0, height:"25%", width:"60%", background:"white"}}>
+                    <Input />
+                    </span>
+                    </div>
+                </div>
             </div>
-        <span style={{position:"fixed", bottom:0, height:"25%", width:"60%", background:"white"}}>
-        <Input />
-        </span>
-        </div>
-    </div>
-</div>);
+        );
     }
 };
 
 const mapDispatchToProps = (dispatch) => {
 	return {
 	    addMsg: (message) => {dispatch(addMessage(message))},
-        rewriteDlg: (dialogs) => {dispatch(rewriteDialogs(dialogs))}
+        rewriteDlg: (dialogs) => {dispatch(rewriteDialogs(dialogs))},
+        rewriteMsg: (chat_id) => {
+	        fetch('/messages/' + chat_id)
+            .then(
+            function(response) {
+                if (response.status !== 200) {
+                    console.log('Looks like there was a problem. Status Code: ' +
+                    response.status);
+                    return;
+                }
+
+                response.json().then(function(data) {
+                    dispatch(rewriteMessages(data))
+                });
+            }
+            )
+            .catch(function(err) {
+            console.log('Fetch Error :-S', err)
+            })
+	    }
 	}
 }
 

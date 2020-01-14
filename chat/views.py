@@ -2,7 +2,7 @@ from motor import motor_asyncio as ma
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User
-from chat.models import Message, Contacts
+from chat.models import Message, Contacts, ChatUser
 from serializer import JSONEncoder
 from aiohttp_session import get_session
 from utils import check_pass, set_session, create_user
@@ -94,7 +94,8 @@ class WebSocket(web.View):
 
         # for _ws in self.request.app['websockets']:
         #     _ws.send_str('%s joined' % login)
-        self.request.app['websockets'].append(ws)
+        login = self.request.login
+        self.request.app['websockets'].append({login: ws})
 
         async for msg in ws:
             if msg.type == WSMsgType.TEXT:
@@ -136,6 +137,46 @@ class Messages(web.View):
         session = await get_session(self.request)
         login = session.get('login')
         msg = await mongo.save(user=login, msg=message)
+        for _ws in self.request.app['websockets']:
+            await _ws.send_json(msg)
+        # document = {'key3': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+
+        # user = await User.query.where(User.login==login).gino.first()
+        return web.Response(status=200)
+        # except Exception:
+        #     return web.Response(status=400)
+
+
+class ChatId(web.View):
+    async def get(self):
+        chat_id = self.request.match_info.get('chat_id', None)
+        mongo = Message(self.request.app['mongo']['messages'][chat_id])
+        # await mongo.save(user = 'admin', msg = 'привет')
+        # await mongo.save(user = 'other', msg = 'привет')
+        # await mongo.save(user='admin', msg='пока')
+        # await mongo.save(user='other', msg='пока')
+        messages = await mongo.get_messages()
+        # document = {'key3': 'value'}
+        # result = await mongo.test_collection.insert_one(document)
+
+        # session = await get_session(self.request)
+        # login = session.get('login')
+        # user = await User.query.where(User.login==login).gino.first()
+        return web.Response(status=200, body=JSONEncoder().encode(messages))
+
+    async def post(self):
+        # try:
+        chat_id = self.request.match_info.get('id', None)
+        data = await self.request.json()
+        message = data['message']
+        mongo_msg = Message(self.request.app['mongo']['messages'][chat_id])
+        mongo_users = ChatUser(self.request.app['mongo']['users'][chat_id])
+        # await mongo.save(user = 'admin', msg = data['message'])
+        # await mongo.save(user = 'other', msg = data['message'])
+        session = await get_session(self.request)
+        login = session.get('login')
+        msg = await mongo_msg.save(user=login, msg=message)
         for _ws in self.request.app['websockets']:
             await _ws.send_json(msg)
         # document = {'key3': 'value'}

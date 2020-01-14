@@ -9,7 +9,10 @@ const messages = (state = initialState, action) => {
     };
     case 'MESSGE_UPDATE': {
       return state;
-    }
+    };
+    case 'REWRITE_MESSAGES':{
+      return {messages: [...action.messages]}
+    };
     default:
       return state;
   };
