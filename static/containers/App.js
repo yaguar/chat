@@ -3,6 +3,7 @@ import 'react-chat-elements/dist/main.css';
 import { MessageBox, ChatItem, ChatList } from 'react-chat-elements';
 import SearchField from "react-search-field";
 import addMessage from '../action/addmessage';
+import changeActiveChat from '../action/change_active_chat';
 import rewriteMessages from '../action/rewritemessages';
 import rewriteDialogs from '../action/rewritedialogs';
 import Input from '../components/Input';
@@ -85,7 +86,7 @@ class App extends React.Component {
                             ))}
                         </div>
                     <span style={{position:"fixed", bottom:0, height:"25%", width:"60%", background:"white"}}>
-                    <Input />
+                    <Input active_chat={this.props.active_chat}/>
                     </span>
                     </div>
                 </div>
@@ -99,6 +100,7 @@ const mapDispatchToProps = (dispatch) => {
 	    addMsg: (message) => {dispatch(addMessage(message))},
         rewriteDlg: (dialogs) => {dispatch(rewriteDialogs(dialogs))},
         rewriteMsg: (chat_id) => {
+	        dispatch(changeActiveChat(chat_id))
 	        fetch('/messages/' + chat_id)
             .then(
             function(response) {
@@ -124,6 +126,8 @@ const mapStateToProps = (state) => {
 	let props = {
 		messages: state.messages.messages,
         dialogs: state.dialogs.dialogs,
+        main_info: state.main_info.main_info,
+        active_chat: state.active_chat.active_chat,
 	};
 	return props;
 }

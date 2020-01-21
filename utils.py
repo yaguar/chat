@@ -3,7 +3,8 @@ from passlib.hash import pbkdf2_sha256
 from time import time
 from aiohttp import web
 
-def set_session(session, login, password):
+def set_session(session, id, login, password):
+    session['id'] = str(id)
     session['login'] = str(login)
     session['password'] = str(password)
     session['last_visit'] = time()

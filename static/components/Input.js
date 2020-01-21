@@ -14,6 +14,7 @@ const Input = (props) => {
                     'Content-Type': 'application/json'
                 }, body: JSON.stringify({
                     message: values.message,
+                    chat_id: props.active_chat
                 })
             })
                 .then(

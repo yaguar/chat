@@ -35,7 +35,7 @@ class Login(web.View):
         user = await User.query.where(User.login==data['login']).gino.first()
         if user and await check_pass(data['login'], data['password']):
             session = await get_session(self.request)
-            set_session(session, user.login, data['password'])
+            set_session(session, user.id, user.login, data['password'])
         return web.Response(status=400, text='Неправильный логин или пароль')
 
 
@@ -44,6 +44,12 @@ class LoginList(web.View):
         search = self.request.rel_url.query['q']
         users = await User.query.where(User.login.contains(search)).gino.all()
         return web.Response(status=200, body=JSONEncoder().encode(users[:10]))
+
+
+class MainInfo(web.View):
+    async def get(self):
+        request = self.request
+        return web.Response(status=200, body=JSONEncoder().encode({'id': request.id, 'login': request.login}))
 
 
 class Registration(web.View):
@@ -95,7 +101,7 @@ class WebSocket(web.View):
         # for _ws in self.request.app['websockets']:
         #     _ws.send_str('%s joined' % login)
         login = self.request.login
-        self.request.app['websockets'].append({login: ws})
+        self.request.app['websockets'].append(ws)
 
         async for msg in ws:
             if msg.type == WSMsgType.TEXT:
@@ -131,6 +137,7 @@ class Messages(web.View):
         # try:
         data = await self.request.json()
         message = data['message']
+        chat_id = data['chat_id']
         mongo = Message(self.request.app['mongo']['test_collection'])
         # await mongo.save(user = 'admin', msg = data['message'])
         # await mongo.save(user = 'other', msg = data['message'])
