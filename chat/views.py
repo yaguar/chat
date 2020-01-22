@@ -138,7 +138,12 @@ class Messages(web.View):
         data = await self.request.json()
         message = data['message']
         chat_id = data['chat_id']
-        mongo = Message(self.request.app['mongo']['test_collection'])
+        if chat_id.isdigit():
+            if int(self.request.id) <= chat_id:
+                chat_id = self.request.id + '_' + str(chat_id)
+            else:
+                chat_id = str(chat_id) + '_' + self.request.id
+        mongo = Message(self.request.app['mongo']['messages'][chat_id])
         # await mongo.save(user = 'admin', msg = data['message'])
         # await mongo.save(user = 'other', msg = data['message'])
         session = await get_session(self.request)
@@ -158,6 +163,11 @@ class Messages(web.View):
 class ChatId(web.View):
     async def get(self):
         chat_id = self.request.match_info.get('chat_id', None)
+        if chat_id.isdigit():
+            if int(self.request.id) <= int(chat_id):
+                chat_id = self.request.id + '_' + str(chat_id)
+            else:
+                chat_id = str(chat_id) + '_' + self.request.id
         mongo = Message(self.request.app['mongo']['messages'][chat_id])
         # await mongo.save(user = 'admin', msg = 'привет')
         # await mongo.save(user = 'other', msg = 'привет')

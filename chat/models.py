@@ -3,10 +3,10 @@ from datetime import datetime
 
 class Message():
 
-    def __init__(self, collection, **kwargs):
+    def __init__(self, collection):
         self.collection = collection
 
-    async def save(self, user, msg, **kw):
+    async def save(self, user, msg):
         result = await self.collection.insert_one({'user': user, 'msg': msg, 'time': datetime.now()})
         return {'user': user, 'msg': msg, 'time': str(datetime.now())}
 
