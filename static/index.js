@@ -14,12 +14,14 @@ import messages from './reducers/messages';
 import dialogs from './reducers/dialogs';
 import main_info from './reducers/main_info';
 import active_chat from './reducers/active_chat';
+import visible_new_dialog from './reducers/visible_new_dialog'
 
 const rootReducer = combineReducers({
     messages: messages,
     dialogs: dialogs,
     main_info: main_info,
-    active_chat: active_chat
+    active_chat: active_chat,
+    visible_new_dialog: visible_new_dialog
 });
  
 export let store = createStore(

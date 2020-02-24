@@ -6,7 +6,9 @@ import addMessage from '../action/addmessage';
 import changeActiveChat from '../action/change_active_chat';
 import rewriteMessages from '../action/rewritemessages';
 import rewriteDialogs from '../action/rewritedialogs';
+import updateVisibleNewDialog from "../action/updatevisiblenewdialog";
 import Input from '../components/Input';
+import ModalNewDialog from '../components/modalNewDialog';
 import {connect} from "react-redux";
 import deleteMessage from "../action/deletemessage";
 import {store} from "../index";
@@ -57,10 +59,11 @@ class App extends React.Component {
             <div>
                 <div class="row">
                     <div class="col-sm-3">
+                        <div>
                         <SearchField
                           placeholder="Search..."
                           onChange={this.onChange}
-                        />
+                        />&nbsp;&nbsp;<span><i className="fas fa-plus-square fa-lg" onClick={()=>this.props.updateVND(true)}></i></span></div>
                         {this.props.dialogs.map((dlg, index) => (
                             <ChatItem
                                 avatar={'https://upload.wikimedia.org/wikipedia/commons/2/21/Che_Guevara_vector_SVG_format.svg'}
@@ -72,6 +75,7 @@ class App extends React.Component {
                             />
                         ))}
                     </div>
+                    <ModalNewDialog show={this.props.visible_new_dialog} visible={this.props.updateVND}/>
                     <div className="col-sm-9">
                         <div style={{overflow:"scroll", height:"65%", overflowX:"hidden"}}>
                             {this.props.messages.map((msg, index) => (
@@ -98,6 +102,7 @@ class App extends React.Component {
 const mapDispatchToProps = (dispatch) => {
 	return {
 	    addMsg: (message) => {dispatch(addMessage(message))},
+        updateVND: (visible) => {dispatch(updateVisibleNewDialog(visible))},
         rewriteDlg: (dialogs) => {dispatch(rewriteDialogs(dialogs))},
         rewriteMsg: (chat_id) => {
 	        dispatch(changeActiveChat(chat_id))
@@ -128,6 +133,7 @@ const mapStateToProps = (state) => {
         dialogs: state.dialogs.dialogs,
         main_info: state.main_info.main_info,
         active_chat: state.active_chat.active_chat,
+        visible_new_dialog: state.visible_new_dialog.visible_new_dialog
 	};
 	return props;
 }

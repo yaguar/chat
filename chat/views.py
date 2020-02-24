@@ -137,9 +137,9 @@ class Messages(web.View):
         # try:
         data = await self.request.json()
         message = data['message']
-        chat_id = data['chat_id']
+        chat_id = str(data['chat_id'])
         if chat_id.isdigit():
-            if int(self.request.id) <= chat_id:
+            if int(self.request.id) <= int(chat_id):
                 chat_id = self.request.id + '_' + str(chat_id)
             else:
                 chat_id = str(chat_id) + '_' + self.request.id
@@ -216,3 +216,4 @@ class ListPerson(web.View):
         # login = session.get('login')
         # user = await User.query.where(User.login==login).gino.first()
         return web.Response(status=200, body=JSONEncoder().encode(users))
+    
