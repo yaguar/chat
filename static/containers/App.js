@@ -75,7 +75,12 @@ class App extends React.Component {
                             />
                         ))}
                     </div>
-                    <ModalNewDialog show={this.props.visible_new_dialog} visible={this.props.updateVND}/>
+                    <ModalNewDialog
+                        show={this.props.visible_new_dialog}
+                        visible={this.props.updateVND}
+                        maybe_users={this.props.maybe_users_for_new_chat}
+                        users={this.props.users_for_new_chat}
+                    />
                     <div className="col-sm-9">
                         <div style={{overflow:"scroll", height:"65%", overflowX:"hidden"}}>
                             {this.props.messages.map((msg, index) => (
@@ -133,7 +138,9 @@ const mapStateToProps = (state) => {
         dialogs: state.dialogs.dialogs,
         main_info: state.main_info.main_info,
         active_chat: state.active_chat.active_chat,
-        visible_new_dialog: state.visible_new_dialog.visible_new_dialog
+        visible_new_dialog: state.visible_new_dialog.visible_new_dialog,
+        users_for_new_chat: state.users_for_new_chat.users_for_new_chat,
+        maybe_users_for_new_chat: state.maybe_users_for_new_chat.maybe_users_for_new_chat
 	};
 	return props;
 }

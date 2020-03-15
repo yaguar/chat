@@ -34,7 +34,7 @@ async def on_shutdown(app):
 
 async def init_pg(app):
     app['websockets'] = []
-    client = ma.AsyncIOMotorClient('mongodb://127.0.0.1:27017')
+    client = ma.AsyncIOMotorClient('mongodb://0.0.0.0:27017')
     mongo = client['chat_db']
     app['mongo'] = mongo
     # engine = await asyncpg.connect(
@@ -76,7 +76,7 @@ middle = [
 
 app = web.Application(middlewares=middle)
 app['config'] = {}
-app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'localhost', 'port':'5432', 'database':'chat_db'}
+app['config']['gino'] = {'user': 'username',  'password':'password', 'host':'0.0.0.0', 'port':'5432', 'database':'chat_db'}
 db.init_app(app)
 # aiohttp_debugtoolbar.setup(app)
 # app.on_startup.append(init_pg)

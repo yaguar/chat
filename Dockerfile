@@ -8,5 +8,6 @@ COPY . /usr/src/app/
 RUN pip install -r requirements.txt
 
 EXPOSE 8000
+EXPOSE 5432
 
 CMD ["python", "app.py"]
