@@ -1,4 +1,5 @@
 import React from 'react';
+import { useFormik } from 'formik';
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import SearchField from "react-search-field";
@@ -10,6 +11,36 @@ import {ChatItem, MessageBox} from "react-chat-elements";
 import removeUserForNewChat from "../action/removeuserfornewchat";
 
 const ModalNewDialog = (props) => {
+    const formik = useFormik({
+        initialValues: {
+          chatName: '',
+        },
+        onSubmit: values => {
+            values['users'] = props.users
+            let url = '/new_chat'
+        fetch(url, {
+                method: 'post', headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(values)
+            })
+            .then(
+                function (response) {
+                    if (response.status != 200) {
+                        console.log('Looks like there was a problem. Status Code: ' +
+                            response.status);
+                        return 0;
+                    }
+                    return 1;
+                }
+            )
+            .catch(function (err) {
+                console.log('Fetch Error :-S', err);
+            });
+        },
+  });
+
     const onChange = (value) => {
         let url = '/login_list?q=' + value
         fetch(url, {
@@ -29,8 +60,6 @@ const ModalNewDialog = (props) => {
                         store.dispatch(rewriteMaybeUserForNewChat(data))
                     });
                     return 1;
-
-
                 }
             )
             .catch(function (err) {
@@ -47,12 +76,24 @@ const ModalNewDialog = (props) => {
     const handleClose = () => props.visible(false)
     return (
         <Modal show={props.show} onHide={handleClose}>
+            <form onSubmit={formik.handleSubmit}>
         <Modal.Header closeButton>
-          <Modal.Title>Создать чат</Modal.Title>
+            <Modal.Title>Создать чат</Modal.Title>
         </Modal.Header>
         <Modal.Body>
             {/*<span style={{position: "relative"}}>*/}
-            <SearchField onChange={onChange} className="modal" placeholder="Поиск человека"/>
+                <input
+                    style={{width: "100%"}}
+                    placeholder="Название чата"
+                    id="chatName"
+                    name="chatName"
+                    type="text"
+                    onChange={formik.handleChange}
+                    value={formik.values.lastName}
+                />
+
+            <p></p>
+            <SearchField onChange={onChange} className="modal" placeholder="Добавить человека"/>
             <p></p>
             <div style={{position: "relative"}}>
             <span>
@@ -77,12 +118,13 @@ const ModalNewDialog = (props) => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Закрыть
           </Button>
-          <Button variant="primary">
-            Save Changes
+          <Button type="submit" variant="primary">
+            Создать чат
           </Button>
         </Modal.Footer>
+            </form>
       </Modal>
     );
 }

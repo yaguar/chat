@@ -2,7 +2,7 @@ from motor import motor_asyncio as ma
 import aiohttp_jinja2
 from aiohttp import web, WSMsgType
 from models import User
-from chat.models import Message, Contacts, ChatUser
+from chat.models import Message, Contacts, ChatUsers
 from serializer import JSONEncoder
 from aiohttp_session import get_session
 from utils import check_pass, set_session, create_user
@@ -41,6 +41,15 @@ class Login(web.View):
 
 class LoginList(web.View):
     async def get(self):
+        search = self.request.rel_url.query['q']
+        users = await User.query.where(User.login.contains(search)).gino.all()
+        return web.Response(status=200, body=JSONEncoder().encode(users[:10]))
+
+
+class ChatList(web.View):
+    async def get(self):
+        mongo = Message(self.request.app['mongo']['users'])
+        messages = await mongo.get_messages()
         search = self.request.rel_url.query['q']
         users = await User.query.where(User.login.contains(search)).gino.all()
         return web.Response(status=200, body=JSONEncoder().encode(users[:10]))
@@ -188,7 +197,8 @@ class ChatId(web.View):
         data = await self.request.json()
         message = data['message']
         mongo_msg = Message(self.request.app['mongo']['messages'][chat_id])
-        mongo_users = ChatUser(self.request.app['mongo']['users'][chat_id])
+        # mongo_users = ChatUser(self.request.app['mongo']['users'][chat_id])
+
         # await mongo.save(user = 'admin', msg = data['message'])
         # await mongo.save(user = 'other', msg = data['message'])
         session = await get_session(self.request)
